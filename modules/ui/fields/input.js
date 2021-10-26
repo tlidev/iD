@@ -24,6 +24,7 @@ export function uiFieldText(field, context) {
     var _entityIDs = [];
     var _tags;
     var _phoneFormats = {};
+    var parseLocaleFloat = localizer.floatParser(localizer.languageCode());
 
     if (field.type === 'tel') {
         fileFetcher.get('phone_formats')
@@ -114,8 +115,12 @@ export function uiFieldText(field, context) {
                     var raw_vals = input.node().value || '0';
                     var vals = raw_vals.split(';');
                     vals = vals.map(function(v) {
-                        var num = parseFloat(v.trim(), 10);
-                        return isFinite(num) ? clamped(num + d) : v.trim();
+                        v = v.trim();
+                        var num = parseLocaleFloat(v);
+                        if (!isFinite(num)) return v;
+                        num = parseFloat(num, 10);
+                        if (!isFinite(num)) return v;
+                        return clamped(num + d).toLocaleString(localizer.languageCode());
                     });
                     input.node().value = vals.join(';');
                     change()();
@@ -213,17 +218,20 @@ export function uiFieldText(field, context) {
             // don't override multiple values with blank string
             if (!val && Array.isArray(_tags[field.key])) return;
 
-            if (!onInput) {
-                if (field.type === 'number' && val) {
-                    var vals = val.split(';');
-                    vals = vals.map(function(v) {
-                        var num = parseFloat(v.trim(), 10);
-                        return isFinite(num) ? clamped(num) : v.trim();
-                    });
-                    val = vals.join(';');
-                }
-                utilGetSetValue(input, val);
+            var displayVal = val;
+            if (field.type === 'number' && val) {
+                var vals = val.split(';');
+                vals = vals.map(function(v) {
+                    v = v.trim();
+                    var num = parseLocaleFloat(v);
+                    if (!isFinite(num)) return v;
+                    num = parseFloat(num, 10);
+                    if (!isFinite(num)) return v;
+                    return clamped(num);
+                });
+                val = vals.join(';');
             }
+            if (!onInput) utilGetSetValue(input, displayVal);
             t[field.key] = val || undefined;
             dispatch.call('change', this, t, onInput);
         };
@@ -242,7 +250,18 @@ export function uiFieldText(field, context) {
 
         var isMixed = Array.isArray(tags[field.key]);
 
-        utilGetSetValue(input, !isMixed && tags[field.key] ? tags[field.key] : '')
+        var val = !isMixed && tags[field.key] ? tags[field.key] : '';
+        if (field.type === 'number' && val) {
+            var vals = val.split(';');
+            vals = vals.map(function(v) {
+                v = v.trim();
+                var num = parseFloat(v, 10);
+                if (!isFinite(num)) return v;
+                return clamped(num).toLocaleString(localizer.languageCode());
+            });
+            val = vals.join(';');
+        }
+        utilGetSetValue(input, val)
             .attr('title', isMixed ? tags[field.key].filter(Boolean).join('\n') : undefined)
             .attr('placeholder', isMixed ? t('inspector.multiple_values') : (field.placeholder() || t('inspector.unknown')))
             .classed('mixed', isMixed);
