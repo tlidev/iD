@@ -116,12 +116,8 @@ export function uiFieldText(field, context) {
                     var raw_vals = input.node().value || '0';
                     var vals = raw_vals.split(';');
                     vals = vals.map(function(v) {
-                        v = v.trim();
                         var num = parseLocaleFloat(v);
-                        if (!isFinite(num)) return v;
-                        num = parseFloat(num, 10);
-                        if (!isFinite(num)) return v;
-                        return formatFloat(clamped(num + d));
+                        return isFinite(num) ? formatFloat(clamped(num + d)) : v;
                     });
                     input.node().value = vals.join(';');
                     change()();
@@ -224,7 +220,7 @@ export function uiFieldText(field, context) {
                 var vals = val.split(';');
                 vals = vals.map(function(v) {
                     var num = parseLocaleFloat(v);
-                    return isFinite(num)) ? clamped(num) : v;
+                    return isFinite(num) ? clamped(num) : v;
                 });
                 val = vals.join(';');
             }
