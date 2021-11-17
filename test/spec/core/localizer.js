@@ -8,6 +8,7 @@ describe('iD.coreLocalizer', function () {
             expect(parseFloat(formatFloat(1.234))).to.eql(1.234);
             expect(parseFloat(formatFloat(1234))).to.eql(1234);
             expect(parseFloat(formatFloat(1234.56))).to.eql(1234.56);
+            expect(parseFloat(formatFloat(3.14159))).to.eql(3.14159);
         });
         it('roundtrips Spanish numbers', function () {
             var localizer = iD.coreLocalizer();
@@ -17,6 +18,7 @@ describe('iD.coreLocalizer', function () {
             expect(parseFloat(formatFloat(1.234))).to.eql(1.234);
             expect(parseFloat(formatFloat(1234))).to.eql(1234);
             expect(parseFloat(formatFloat(1234.56))).to.eql(1234.56);
+            expect(parseFloat(formatFloat(3.14159))).to.eql(3.14159);
         });
         it('roundtrips Arabic numbers', function () {
             var localizer = iD.coreLocalizer();
@@ -26,6 +28,7 @@ describe('iD.coreLocalizer', function () {
             expect(parseFloat(formatFloat(1.234))).to.eql(1.234);
             expect(parseFloat(formatFloat(1234))).to.eql(1234);
             expect(parseFloat(formatFloat(1234.56))).to.eql(1234.56);
+            expect(parseFloat(formatFloat(3.14159))).to.eql(3.14159);
         });
         it('roundtrips Bengali numbers', function () {
             var localizer = iD.coreLocalizer();
@@ -35,6 +38,7 @@ describe('iD.coreLocalizer', function () {
             expect(parseFloat(formatFloat(1.234))).to.eql(1.234);
             expect(parseFloat(formatFloat(1234))).to.eql(1234);
             expect(parseFloat(formatFloat(1234.56))).to.eql(1234.56);
+            expect(parseFloat(formatFloat(3.14159))).to.eql(3.14159);
         });
     });
 });
