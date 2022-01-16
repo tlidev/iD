@@ -103,6 +103,18 @@ export function uiFieldText(field, context) {
 
             var buttons = wrap.selectAll('.increment, .decrement')
                 .data(rtl ? [inc, -inc] : [-inc, inc]);
+            
+            function changeNumber(d3_event, d) {
+                d3_event.preventDefault();
+                var raw_vals = input.node().value || '0';
+                var vals = raw_vals.split(';');
+                vals = vals.map(function(v) {
+                    var num = parseFloat(v.trim(), 10);
+                    return isFinite(num) ? clamped(num + d) : v.trim();
+                });
+                input.node().value = vals.join(';');
+                change()();     
+            }
 
             buttons.enter()
                 .append('button')
@@ -115,17 +127,7 @@ export function uiFieldText(field, context) {
                     return t(`inspector.${which}`);
                 })
                 .merge(buttons)
-                .on('click', function(d3_event, d) {
-                    d3_event.preventDefault();
-                    var raw_vals = input.node().value || '0';
-                    var vals = raw_vals.split(';');
-                    vals = vals.map(function(v) {
-                        var num = parseFloat(v.trim(), 10);
-                        return isFinite(num) ? clamped(num + d) : v.trim();
-                    });
-                    input.node().value = vals.join(';');
-                    change()();
-                });
+                .on('click', changeNumber(d3_event, d));
         } else if (field.type === 'identifier' && field.urlFormat && field.pattern) {
 
             input.attr('type', 'text');
